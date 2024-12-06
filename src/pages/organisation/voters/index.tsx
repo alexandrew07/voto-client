@@ -35,8 +35,8 @@ type VotersDetails = Record<string, string>;
 
 interface Voter {
   name: string;
+  username: string;
   email: string;
-  gender: string;
   details: VotersDetails;
   _id: string;
 }
@@ -168,7 +168,7 @@ const Voters = () => {
       return field.charAt(0).toUpperCase() + field.slice(1);
     }) ?? [];
 
-  const tableHeads = ["Name", "Email", ...capitalizedFields];
+  const tableHeads = ["Name", "Username", "Email", ...capitalizedFields];
 
   const th = (
     <tr>
@@ -210,6 +210,7 @@ const Voters = () => {
         />
       </td>
       <td className="table-data">{voter?.name ?? "-"}</td>
+      <td className="table-data">{voter?.username ?? "-"}</td>
       <td className="table-data">{voter?.email ?? "-"}</td>
       {(user as Organisation)?.votersFields.map((field, fieldIndex) => (
         <td key={fieldIndex} className="table-data">
@@ -265,7 +266,10 @@ const Voters = () => {
         message: res.message,
       });
       closeImport();
-      window.location.reload();
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     } catch (error: any) {
       notifications.show({
         color: "red",
@@ -404,7 +408,7 @@ const Voters = () => {
               <div className="grid grid-cols-2 gap-4">
                 <Select
                   label="Filter by"
-                  data={["Name", "Email", ...capitalizedFields]}
+                  data={["Name", "Email", "Username", ...capitalizedFields]}
                   required
                   withAsterisk={false}
                   {...form.getInputProps("filterBy")}

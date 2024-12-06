@@ -1,5 +1,7 @@
 import React from "react";
 import { Button, FileInput, Modal } from "@mantine/core";
+import Image from "next/image";
+import sample from "../../../public/sample.png";
 
 type ImportVotersProps = {
   openedImport: boolean;
@@ -22,7 +24,7 @@ const ImportVoters: React.FC<ImportVotersProps> = ({
     <Modal
       overlayProps={{ opacity: 0.4, blur: 1 }}
       title="IMPORT VOTERS"
-      size="md"
+      size="lg"
       centered
       radius="md"
       opened={openedImport}
@@ -30,9 +32,22 @@ const ImportVoters: React.FC<ImportVotersProps> = ({
     >
       <p className="mt-4 mb-1">Please select the CSV file to import</p>
       <p className="text-[10pt] text-center mb-4">
-        Note: name,gender and email are compulsory to add to the header.
-        followed with your description
+        Note: name, username, email and password are compulsory to add to the
+        header of the csv. followed with your organisation custom fields
       </p>
+
+      <div className="py-4">
+        <p className="text-center text-sm mb-1 underline-offset-2 underline">
+          Sample file
+        </p>
+        <Image src={sample} alt="sample csv" />
+
+        <p className="text-xs mt-2">
+          NOTE: <span className="text-[#961699]">username</span> and{" "}
+          <span className="text-[#961699]">email</span> must be unique
+        </p>
+      </div>
+
       <FileInput
         value={votersCSV}
         onChange={setVotersCSV}

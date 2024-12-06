@@ -149,7 +149,9 @@ const Candidate = () => {
         message: res.message,
       });
       closeImport();
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     } catch (error: any) {
       notifications.show({
         color: "red",
