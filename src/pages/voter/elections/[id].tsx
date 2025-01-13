@@ -389,9 +389,6 @@ const ElectionDetails = () => {
                     (voter) => voter.voter?._id === user?._id
                   );
 
-                  console.log(currentVoterCasted, "currentVoterCasted..");
-                  console.log(election, "election.");
-
                   if (election.totalNoOfVotesPerVoter) {
                     if (
                       +noOfVotes >
