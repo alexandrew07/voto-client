@@ -17,6 +17,7 @@ export type Organisation = {
   wallet: number;
   votesRemaining: number;
   _id: string;
+  allowVotersEmailVerification: boolean;
 };
 
 export type Voter = {

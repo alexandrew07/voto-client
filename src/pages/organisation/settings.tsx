@@ -5,6 +5,7 @@ import { Organisation } from "@/features/authSlice";
 import {
   useUpdateExternalRegistrationMutation,
   useUpdateOrganisationMutation,
+  useUpdateAllowVotersEmailVerificationMutation,
 } from "@/features/organisationApi";
 import { RootState } from "@/store";
 import { Button, Divider, MultiSelect, Stack, TextInput } from "@mantine/core";
@@ -23,6 +24,8 @@ const Settings = () => {
     logoUrl: "",
     candidatesFields: (user as Organisation)?.candidatesFields,
     votersFields: (user as Organisation)?.votersFields,
+    allowVotersToVerifyEmail: (user as Organisation)
+      ?.allowVotersEmailVerification,
   });
 
   const [imgValue, setImgValue] = useState<FileWithPath[]>([]);
@@ -42,6 +45,11 @@ const Settings = () => {
 
   const [update, { isLoading: loadingUpdate }] =
     useUpdateExternalRegistrationMutation();
+
+  const [
+    updateAllowVotersEmailVerification,
+    { isLoading: loadingUpdateVotersEmailVerification },
+  ] = useUpdateAllowVotersEmailVerificationMutation();
 
   async function submitHandler(
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -123,6 +131,49 @@ const Settings = () => {
 
             try {
               const res = await update(payload).unwrap();
+              notifications.show({
+                color: "green",
+                message: res.message,
+              });
+              window.location.reload();
+            } catch (error: any) {
+              notifications.show({
+                color: "red",
+                message: error.data.message,
+              });
+            }
+          }}
+        />
+      </div>
+
+      <div className="mb-4 flex items-center gap-2">
+        Allow email verification (if exists) for voters:{" "}
+        <strong className={`${loadingUpdate && "opacity-20"}`}>
+          {(user as Organisation)?.allowVotersEmailVerification
+            ? "ENABLED"
+            : "DISABLED"}
+        </strong>
+        <IconRotate
+          className={`text-[#961699] cursor-pointer ${
+            loadingUpdateVotersEmailVerification && "opacity-20"
+          }`}
+          onClick={async () => {
+            if (loadingUpdateVotersEmailVerification) return;
+
+            const payload = {
+              id: user._id,
+              data: {
+                allowVotersEmailVerification: (user as Organisation)
+                  ?.allowVotersEmailVerification
+                  ? false
+                  : true,
+              },
+            };
+
+            try {
+              const res = await updateAllowVotersEmailVerification(
+                payload
+              ).unwrap();
               notifications.show({
                 color: "green",
                 message: res.message,

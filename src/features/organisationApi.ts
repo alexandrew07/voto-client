@@ -115,6 +115,15 @@ export const organisationApi = apiSlice.injectEndpoints({
         credentials: "include",
       }),
     }),
+
+    updateAllowVotersEmailVerification: builder.mutation({
+      query: (payload) => ({
+        url: `/organisations/${payload.id}/update-allow-voters-email-verification`,
+        method: "PATCH",
+        body: payload.data,
+        credentials: "include",
+      }),
+    }),
   }),
 });
 
@@ -131,4 +140,5 @@ export const {
   useUpdateExternalRegistrationMutation,
   useVerifyAccountNumberMutation,
   useImportCandidatesMutation,
+  useUpdateAllowVotersEmailVerificationMutation,
 } = organisationApi;
