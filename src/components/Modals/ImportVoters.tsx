@@ -32,8 +32,9 @@ const ImportVoters: React.FC<ImportVotersProps> = ({
     >
       <p className="mt-4 mb-1">Please select the CSV file to import</p>
       <p className="text-[10pt] text-center mb-4">
-        Note: name, username, email and password are compulsory to add to the
-        header of the csv file followed with your organisation custom fields
+        Note: name, username, email, and password are compulsory fields to
+        include in the header of the CSV file, followed by your
+        organisation&apos;s custom fields
       </p>
 
       <div className="py-4">

@@ -1,4 +1,4 @@
-import { useGetOrganisationMutation } from "@/features/organisationApi";
+import { useGetOrganisationPublicMutation } from "@/features/organisationApi";
 import { useCreateVoterMutation } from "@/features/voterApi";
 import { Button, PasswordInput, Select, Stack, TextInput } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
@@ -31,8 +31,10 @@ const RegisterVoter = () => {
   const [organisationName, setOrganisationName] = useState("");
   const [externalRegistration, setExternalRegistration] =
     useState<Boolean>(true);
+  const [allowVotersEmailVerification, setAllowVotersEmailVerification] =
+    useState<Boolean>(true);
 
-  const [getOrganisation] = useGetOrganisationMutation();
+  const [getOrganisation] = useGetOrganisationPublicMutation();
 
   useEffect(() => {
     if (!organisationId) return;
@@ -42,6 +44,7 @@ const RegisterVoter = () => {
       setVotersFields(data.votersFields);
       setOrganisationName(data.organisationName);
       setExternalRegistration(data.externalRegistration);
+      setAllowVotersEmailVerification(data.allowVotersEmailVerification);
     }
     fetchData();
   }, [organisationId, getOrganisation]);
@@ -117,9 +120,13 @@ const RegisterVoter = () => {
         color: "green",
         message: res.message,
       });
-      push(
-        `/organisation/voters/${organisationId}/verify?email=${formValues.email}`
-      );
+      if (allowVotersEmailVerification) {
+        push(
+          `/organisation/voters/${organisationId}/verify?email=${formValues.email}`
+        );
+      } else {
+        push(`/voter/login`);
+      }
     } catch (error: any) {
       console.log(error);
       notifications.show({

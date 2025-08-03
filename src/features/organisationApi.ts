@@ -81,6 +81,14 @@ export const organisationApi = apiSlice.injectEndpoints({
       }),
     }),
 
+    getOrganisationPublic: builder.mutation({
+      query: (id) => ({
+        url: `/organisations/public/${id}`,
+        method: "GET",
+        credentials: "include",
+      }),
+    }),
+
     getStats: builder.mutation<{ data: any }, void>({
       query: () => ({
         url: "/organisations/stats",
@@ -141,4 +149,5 @@ export const {
   useVerifyAccountNumberMutation,
   useImportCandidatesMutation,
   useUpdateAllowVotersEmailVerificationMutation,
+  useGetOrganisationPublicMutation,
 } = organisationApi;
