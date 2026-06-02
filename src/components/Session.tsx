@@ -1,7 +1,7 @@
 import { useLogoutMutation, useMeMutation } from "@/features/authApi";
-import { setCredentials } from "@/features/authSlice";
+import { logout as clearAuth, setCredentials } from "@/features/authSlice";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Spinner from "./Spinner";
 import { RootState } from "@/store";
@@ -16,6 +16,18 @@ const Session = ({ children }: { children: React.ReactElement }) => {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   const [loading, setLoading] = useState(false);
+
+  const clearSessionAndRedirect = useCallback(async () => {
+    dispatch(clearAuth());
+
+    try {
+      await logout().unwrap();
+    } catch (error) {
+      // Ignore logout failures and still send the user back.
+    }
+
+    await router.replace(process.env.NEXT_PUBLIC_URL!);
+  }, [dispatch, logout, router]);
 
   useEffect(() => {
     if (
@@ -40,18 +52,26 @@ const Session = ({ children }: { children: React.ReactElement }) => {
     const fetchData = async () => {
       try {
         const { user } = await getMe().unwrap();
-        if (!user) return router.push(process.env.NEXT_PUBLIC_URL!);
+        if (!user) {
+          await clearSessionAndRedirect();
+          return;
+        }
         dispatch(setCredentials(user));
       } catch (error) {
-        await logout().unwrap();
-        router.push(process.env.NEXT_PUBLIC_URL!);
+        await clearSessionAndRedirect();
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [getMe, dispatch, router, logout]);
+  }, [
+    clearSessionAndRedirect,
+    dispatch,
+    getMe,
+    isAuthenticated,
+    router.pathname,
+  ]);
 
   if (loading && router.pathname !== "/") {
     return (
