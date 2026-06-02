@@ -3,7 +3,6 @@ import { RootState } from "@/store";
 import { Modal, createStyles, Button } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconCircleCheck } from "@tabler/icons-react";
-import Link from "next/link";
 import React from "react";
 import { PaystackConsumer } from "react-paystack";
 import { useSelector } from "react-redux";
@@ -30,12 +29,87 @@ const useStyles = createStyles(() => ({
   },
 }));
 
+type PricingPlan = {
+  name: string;
+  price: string;
+  audience?: string;
+  subtitle?: string;
+  features: string[];
+  cta: string;
+  amount?: number;
+  plan?: string;
+};
+
 const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
   opened,
   close,
 }) => {
   const { classes } = useStyles();
   const { user } = useSelector((state: RootState) => state.auth);
+  const pricingLink = "https://voto.com.ng/#pricing";
+
+  const plans: PricingPlan[] = [
+    {
+      name: "LITE",
+      price: "₦15,000",
+      audience: "2,000 votes",
+      subtitle: "Small Organization",
+      features: [
+        "On-site and Off-site Elections",
+        "Secure Voting",
+        "Analytics and Reporting",
+        "Free graphic design",
+        "Customizable Solutions",
+        "Priority Email Support",
+        "Onboarding & training",
+        "Printed Ballots",
+        "Email or Phone Support",
+        "Certification & Verification",
+      ],
+      cta: "Get started",
+      amount: 15000,
+      plan: "lite",
+    },
+    {
+      name: "DELUXE",
+      price: "₦35,000",
+      audience: "5,000 votes - 10,000 votes",
+      subtitle: "Big Organization",
+      features: [
+        "On-site and Off-site Elections",
+        "Secure Voting",
+        "Analytics and Reporting",
+        "Free graphic design",
+        "Customizable Solutions",
+        "Priority Email Support",
+        "Onboarding & training",
+        "Printed Ballots",
+        "Email or Phone Support",
+        "Certification & Verification",
+      ],
+      cta: "Get started",
+      amount: 35000,
+      plan: "deluxe",
+    },
+    {
+      name: "ENTERPRISE",
+      price: "For 10,000 votes & above",
+      subtitle: "All features on LITE and DELUXE",
+      features: [],
+      cta: "Contact us",
+    },
+    {
+      name: "PAY TO VOTE",
+      price: "8% of total revenue",
+      subtitle: "Monetized Elections",
+      features: [
+        "All features on LITE and DELUXE",
+        "Price negotiable",
+        "Next-day-payout after voting",
+      ],
+      cta: "Get started",
+    },
+  ] as const;
 
   const handleSuccess = (message: string) => {
     notifications.show({
@@ -60,193 +134,97 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
       classNames={classes}
     >
       <div className="grid lg:grid-cols-2 gap-10 mt-8">
-        <aside
-          className="p-4 rounded-xl bg-white"
-          style={{
-            boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
-          }}
-        >
-          <h5 className="font-bold text-lg">LITE</h5>
-          <h1 className="text-3xl font-bold text-[var(--primary-color)]">
-            ₦10,000
-          </h1>
-          <p className="text-center mt-4 text-[var(--primary-color)]">
-            Small Organization
-          </p>
+        {plans.map((plan) => (
+          <aside
+            key={plan.name}
+            className="p-4 rounded-xl bg-white flex flex-col"
+            style={{
+              boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
+            }}
+          >
+            <h5 className="font-bold text-lg">{plan.name}</h5>
+            <h1 className="text-3xl font-bold text-[var(--primary-color)]">
+              {plan.price}
+            </h1>
+            <p className="text-center mt-4 text-[var(--primary-color)]">
+              {plan.audience || plan.subtitle}
+            </p>
 
-          <div className="border-b my-6"></div>
+            {plan.audience ? (
+              <p className="text-center mt-1 text-sm">{plan.subtitle}</p>
+            ) : plan.subtitle ? (
+              <p className="text-center mt-1 text-sm">{plan.subtitle}</p>
+            ) : null}
 
-          <ul className="space-y-4 text-sm">
-            <li className="flex gap-2 items-center">
-              <IconCircleCheck
-                fill="var(--primary-color)"
-                color="#fff"
-                size={28}
-              />
-              <span>On-site and Off-site Elections</span>
-            </li>
+            <div className="border-b my-6"></div>
 
-            <li className="flex gap-2 items-center">
-              <IconCircleCheck
-                fill="var(--primary-color)"
-                color="#fff"
-                size={28}
-              />
-              <span>Secure Voting</span>
-            </li>
+            {plan.features.length > 0 && (
+              <ul className="space-y-4 text-sm flex-1">
+                {plan.features.map((feature) => (
+                  <li key={feature} className="flex gap-2 items-center">
+                    <IconCircleCheck
+                      fill="var(--primary-color)"
+                      color="#fff"
+                      size={28}
+                    />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
 
-            <li className="flex gap-2 items-center">
-              <IconCircleCheck
-                fill="var(--primary-color)"
-                color="#fff"
-                size={28}
-              />
-              <span>Analytics and Reporting</span>
-            </li>
-
-            <Link
-              href="https://voto.com.ng/#pricing"
-              className="block text-center mt-2 underline hover:text-[var(--primary-color)]"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Explore more benefits
-            </Link>
-          </ul>
-
-          <div className="mt-8">
-            <PaystackConsumer
-              amount={10000 * 100}
-              email={(user as Organisation)?.email}
-              onSuccess={() => handleSuccess("Plan upgraded successfully")}
-              publicKey={process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY!}
-              metadata={{
-                custom_fields: [
-                  {
-                    display_name: "upgradePlan",
-                    value: "upgradePlan",
-                    variable_name: "upgradePlan",
-                  },
-                  {
-                    display_name: "organisationId",
-                    value: user?._id,
-                    variable_name: "organisationId",
-                  },
-                  {
-                    display_name: "plan",
-                    value: "lite",
-                    variable_name: "plan",
-                  },
-                ],
-              }}
-            >
-              {({ initializePayment }) => (
-                <Button
-                  className="bg-[#961699] hover:bg-[#961699] hover:opacity-80"
-                  onClick={() => {
-                    initializePayment();
+            <div className="mt-8">
+              {plan.amount ? (
+                <PaystackConsumer
+                  amount={plan.amount * 100}
+                  email={(user as Organisation)?.email}
+                  onSuccess={() => handleSuccess("Plan upgraded successfully")}
+                  publicKey={process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY!}
+                  metadata={{
+                    custom_fields: [
+                      {
+                        display_name: "upgradePlan",
+                        value: "upgradePlan",
+                        variable_name: "upgradePlan",
+                      },
+                      {
+                        display_name: "organisationId",
+                        value: user?._id,
+                        variable_name: "organisationId",
+                      },
+                      {
+                        display_name: "plan",
+                        value: plan.plan,
+                        variable_name: "plan",
+                      },
+                    ],
                   }}
                 >
-                  Subscribe
-                </Button>
-              )}
-            </PaystackConsumer>
-          </div>
-        </aside>
-
-        <aside
-          className="p-4 rounded-xl bg-white"
-          style={{
-            boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
-          }}
-        >
-          <h5 className="font-bold text-lg">DELUXE</h5>
-          <h1 className="text-3xl font-bold text-[var(--primary-color)]">
-            ₦20,000
-          </h1>
-          <p className="text-center mt-4 text-[var(--primary-color)]">
-            Big Organization
-          </p>
-
-          <div className="border-b my-6"></div>
-
-          <ul className="space-y-4 text-sm">
-            <li className="flex gap-2 items-center">
-              <IconCircleCheck
-                fill="var(--primary-color)"
-                color="#fff"
-                size={28}
-              />
-              <span>On-site and Off-site Elections</span>
-            </li>
-
-            <li className="flex gap-2 items-center">
-              <IconCircleCheck
-                fill="var(--primary-color)"
-                color="#fff"
-                size={28}
-              />
-              <span>Secure Voting</span>
-            </li>
-
-            <li className="flex gap-2 items-center">
-              <IconCircleCheck
-                fill="var(--primary-color)"
-                color="#fff"
-                size={28}
-              />
-              <span>Analytics and Reporting</span>
-            </li>
-
-            <Link
-              href="https://voto.com.ng/#pricing"
-              className="block text-center mt-2 underline hover:text-[var(--primary-color)]"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Explore more benefits
-            </Link>
-          </ul>
-
-          <div className="mt-8">
-            <PaystackConsumer
-              amount={20000 * 100}
-              email={(user as Organisation)?.email}
-              onSuccess={() => handleSuccess("Plan upgraded successfully")}
-              publicKey={process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY!}
-              metadata={{
-                custom_fields: [
-                  {
-                    display_name: "upgradePlan",
-                    value: "upgradePlan",
-                    variable_name: "upgradePlan",
-                  },
-                  {
-                    display_name: "organisationId",
-                    value: user?._id,
-                    variable_name: "organisationId",
-                  },
-                  {
-                    display_name: "plan",
-                    value: "deluxe",
-                    variable_name: "plan",
-                  },
-                ],
-              }}
-            >
-              {({ initializePayment }) => (
+                  {({ initializePayment }) => (
+                    <Button
+                      className="bg-[#961699] hover:bg-[#961699] hover:opacity-80"
+                      onClick={() => {
+                        initializePayment();
+                      }}
+                    >
+                      {plan.cta}
+                    </Button>
+                  )}
+                </PaystackConsumer>
+              ) : (
                 <Button
+                  component="a"
+                  href={pricingLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="bg-[#961699] hover:bg-[#961699] hover:opacity-80"
-                  onClick={() => {
-                    initializePayment();
-                  }}
                 >
-                  Subscribe
+                  {plan.cta}
                 </Button>
               )}
-            </PaystackConsumer>
-          </div>
-        </aside>
+            </div>
+          </aside>
+        ))}
       </div>
     </Modal>
   );
