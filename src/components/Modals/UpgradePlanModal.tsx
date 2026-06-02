@@ -34,7 +34,7 @@ type PricingPlan = {
   price: string;
   audience?: string;
   subtitle?: string;
-  features: string[];
+  features: readonly string[];
   cta: string;
   amount?: number;
   plan?: string;
@@ -48,7 +48,7 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
   const { user } = useSelector((state: RootState) => state.auth);
   const pricingLink = "https://voto.com.ng/#pricing";
 
-  const plans: PricingPlan[] = [
+  const plans: readonly PricingPlan[] = [
     {
       name: "LITE",
       price: "₦15,000",
@@ -109,7 +109,7 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
       ],
       cta: "Get started",
     },
-  ] as const;
+  ];
 
   const handleSuccess = (message: string) => {
     notifications.show({
