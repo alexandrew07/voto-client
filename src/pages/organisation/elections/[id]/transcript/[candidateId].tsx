@@ -52,11 +52,12 @@ const Transcript = () => {
       const res = await getElection(electionId).unwrap();
 
       const filteredCastedVoters = res.data.castedVoters.filter(
-        (castedVoter: CastedVoter) => castedVoter.votedFor === query.candidateId
+        (castedVoter: CastedVoter) =>
+          castedVoter.votedFor === query.candidateId,
       );
 
       const candidate = res.data.candidates.find(
-        (candidate: any) => candidate.candidate._id === query.candidateId
+        (candidate: any) => candidate.candidate._id === query.candidateId,
       );
 
       setOriginalCastedVoters(filteredCastedVoters);
@@ -77,7 +78,7 @@ const Transcript = () => {
 
   const totalVotesReceived = castedVoters.reduce(
     (total, castedVoter) => total + castedVoter.votesAdded,
-    0
+    0,
   );
 
   const handleFilters = (values: { filterBy: string; filterValue: string }) => {
@@ -218,7 +219,7 @@ const Transcript = () => {
                 </h3> */}
 
                 {castedVoter.voter &&
-                  Object.entries(castedVoter.voter.details).map(
+                  Object.entries(castedVoter.voter.details ?? {}).map(
                     ([key, value]) => (
                       <h3 key={key}>
                         <span className="text-[#961699]">
@@ -226,7 +227,7 @@ const Transcript = () => {
                         </span>{" "}
                         - {value as any}
                       </h3>
-                    )
+                    ),
                   )}
 
                 <p className="pt-4 font-semibold">
