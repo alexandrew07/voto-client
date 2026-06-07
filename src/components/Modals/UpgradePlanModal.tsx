@@ -180,6 +180,7 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
                   email={(user as Organisation)?.email}
                   onSuccess={() => handleSuccess("Plan upgraded successfully")}
                   publicKey={process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY!}
+                  channels={["card", "bank", "bank_transfer", "ussd", "qr"]}
                   metadata={{
                     custom_fields: [
                       {

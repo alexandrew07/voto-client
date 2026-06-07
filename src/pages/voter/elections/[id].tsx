@@ -98,15 +98,14 @@ const ElectionDetails = () => {
 
     const fetchData = async () => {
       try {
-        const electionsCategory = await getCategorizedElection(
-          categoryId
-        ).unwrap();
+        const electionsCategory =
+          await getCategorizedElection(categoryId).unwrap();
 
         const filteredElections = electionsCategory.data.elections.map(
           (election: any) => ({
             _id: election._id,
             title: election.title,
-          })
+          }),
         );
 
         setCategorizedElection(filteredElections);
@@ -143,12 +142,12 @@ const ElectionDetails = () => {
 
         if (user === null) {
           const votedElections = JSON.parse(
-            localStorage.getItem("votedElections") || "[]"
+            localStorage.getItem("votedElections") || "[]",
           );
           votedElections.push(electionId);
           localStorage.setItem(
             "votedElections",
-            JSON.stringify(votedElections)
+            JSON.stringify(votedElections),
           );
         }
 
@@ -183,7 +182,7 @@ const ElectionDetails = () => {
       // Time calculations for days, hours, minutes and seconds
       let days = Math.floor(distance / (1000 * 60 * 60 * 24));
       let hours = Math.floor(
-        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
       );
       let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       let seconds = Math.floor((distance % (1000 * 60)) / 1000);
@@ -203,7 +202,7 @@ const ElectionDetails = () => {
 
   const totalVotes = election.candidates.reduce(
     (total, candidate) => total + candidate.votesReceived,
-    0
+    0,
   );
 
   const handleSuccess = () => {
@@ -217,13 +216,13 @@ const ElectionDetails = () => {
 
   if (user?._id) {
     hasVoted = election.castedVoters.some(
-      (voter) => voter?.voter?._id === user._id
+      (voter) => voter?.voter?._id === user._id,
     );
   }
 
   if (!hasVoted && user === null) {
     const votedElections = JSON.parse(
-      localStorage.getItem("votedElections") || "[]"
+      localStorage.getItem("votedElections") || "[]",
     );
     hasVoted = votedElections.includes(electionId);
   }
@@ -306,6 +305,7 @@ const ElectionDetails = () => {
             amount={+noOfVotes * +election?.amountToPay! * 100}
             email={(user as Voter)?.email || email}
             publicKey={process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY!}
+            channels={["card", "bank", "bank_transfer", "ussd", "qr"]}
             // @ts-ignore
             onSuccess={handleSuccess}
             metadata={{
@@ -386,7 +386,7 @@ const ElectionDetails = () => {
                     });
 
                   const currentVoterCasted = election.castedVoters.find(
-                    (voter) => voter.voter?._id === user?._id
+                    (voter) => voter.voter?._id === user?._id,
                   );
 
                   if (election.totalNoOfVotesPerVoter) {

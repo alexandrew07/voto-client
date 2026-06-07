@@ -51,7 +51,7 @@ const Wallet = () => {
 
   const fetchBanks = async () => {
     const res = await fetch(
-      "https://api.paystack.co/bank?country=nigeria&currency=NGN"
+      "https://api.paystack.co/bank?country=nigeria&currency=NGN",
     );
     const { data } = await res.json();
     setBanks(data);
@@ -181,7 +181,7 @@ const Wallet = () => {
                 value={selectedBank?.name}
                 onChange={(value) => {
                   const selectedBank: Bank | undefined = banks.find(
-                    (bank) => bank.name === value
+                    (bank) => bank.name === value,
                   );
                   setSelectedBank(selectedBank!);
 
@@ -253,6 +253,13 @@ const Wallet = () => {
                 {(user as Organisation)?.subscriptionPlan
                   ? (user as Organisation).subscriptionPlan
                   : "free"}
+              </h2>
+            </div>
+
+            <div className="mt-4">
+              <h1 className="text-[25px] font-bold">Votes Remaining:</h1>
+              <h2 className="text-[18px] font-medium">
+                {(user as Organisation)?.votesRemaining ?? 0}
               </h2>
             </div>
 
